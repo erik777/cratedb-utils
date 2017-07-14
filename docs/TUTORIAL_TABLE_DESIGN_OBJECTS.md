@@ -1,12 +1,12 @@
 # Crate Table Design with objects
 
-If you are used to a traditional SQL database, and putting your JSON or XML documents in a string/varchar/clob/blob/text field, you are going to love the 'object' datatype in CrateDB.  This tutorial takes you through table creation, and with hands on experience, you learn what you can and cannot do with this capability, and how to do it.  
+If you are used to a traditional SQL database, and putting your JSON or XML documents in a string/varchar/clob/blob/text field, you are going to love the `object` datatype in CrateDB.  This tutorial takes you through table creation, and with hands on experience, you learn what you can and cannot do with this capability, and how to do it.  
 
 ## Presumptions
 
 You ideally have a working copy of CrateDB running if you want to try the examples.  You might find it a good read even if not in front of your CrateDB CLI (crash), as it is very detailed.  
 
-You will want to read Crate's documentation on [table schema creation](https://crate.io/docs/crate/reference/sql/ddl/basics.html#schemas) and [Data Types](https://crate.io/docs/crate/reference/sql/data_types.html), reading in detail the part on the [object](https://crate.io/docs/crate/reference/sql/data_types.html#object) type.  
+You will want to read Crate's documentation on [table schema creation](https://crate.io/docs/crate/reference/sql/ddl/basics.html#schemas) and [Data Types](https://crate.io/docs/crate/reference/sql/data_types.html), reading in detail the part on the [object](https://crate.io/docs/crate/reference/sql/data_types.html#object) type.  You should have a basic understand of the difference between `dynamic` and `ignored` objects.  
 
 
 ## Table definition
@@ -119,7 +119,7 @@ However, there is an issue when trying to query a number when there is a text va
 	cr> SELECT * FROM mydocs WHERE ext['ccid'] = 56;
 	SQLActionException[SQLParseException: Cannot cast 'cust456' to type long]
 	
-	But, you can query a string value even though there is a number
+But, you can query a string value even though there is a number
 	
 	cr> SELECT * FROM mydocs WHERE ext['ccid'] = 'cust456';
 	+------+---------+--------------------------------------------------------------------------+------+-----------+
@@ -278,7 +278,7 @@ How do we separate data that has our 'realboolean' field from that which doesn't
 
 However, you can CAST the field to boolean.  If it does not exist, then it will be null.
 
-	cr> SELECT * FROM mydocs WHERE CAST(ext['realboolean'] as boolean) IS  NULL;
+	cr> SELECT * FROM mydocs WHERE CAST(ext['realboolean'] as boolean) IS NOT NULL;
 	+------+---------+------------------------------------------+------+-----------+
 	|  doc | doctype | ext                                      | meta | owner_mid |
 	+------+---------+------------------------------------------+------+-----------+
@@ -287,7 +287,7 @@ However, you can CAST the field to boolean.  If it does not exist, then it will 
 	+------+---------+------------------------------------------+------+-----------+
 	SELECT 2 rows in set (0.004 sec)
 	
-	cr> SELECT * FROM mydocs WHERE CAST(ext['realboolean'] as boolean) IS  NULL;
+	cr> SELECT * FROM mydocs WHERE CAST(ext['realboolean'] as boolean) IS NULL;
 	+--------------------------------------------------------------------------+---------+--------------------------------------------------------------------------+------+-----------+
 	| doc                                                                      | doctype | ext                                                                      | meta | owner_mid |
 	+--------------------------------------------------------------------------+---------+--------------------------------------------------------------------------+------+-----------+
@@ -300,10 +300,9 @@ However, you can CAST the field to boolean.  If it does not exist, then it will 
 
 
 ### Dynamic fields
-types.  types.  
-Our meta field is dynamic because we want it to be consistent (enforced data types) while still having the ability to add fields via our application without doing an explicit schema change.  
+Our `meta` field is `dynamic` because we want it to be consistent (enforced data types) while still having the ability to add fields via our application without doing an explicit schema change.  
 
-So far, nothing we did added new fields to our schema since doc and ext both used `ignored`.
+So far, nothing we did added new fields to our schema since `doc` and `ext` both used `ignored`.
 
 	cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs';
 	+-----------------+-----------+----------------+-------------+
@@ -356,7 +355,7 @@ and kick the tires on dynamically created fields
 	+-----------------+-----------+----------------+-------------+
 	SELECT 6 rows in set (0.002 sec)
 
-We can see it added our 4 new fields wtih the types we expected.  The rules are basically that your following inserts need to match the types of the new fiels.  'newbool' must always be a valid boolean value.  
+We can see it added our 4 new fields wtih the types we expected.  The rules are basically that after your initial insert, your following inserts need to match the types of the new fields.  `newbool` must always be a valid boolean value.  
 
 Since the use case here is extending the table schema as the application changes, adhering to the same data type for each insert should not be an issue.  	
 
@@ -385,8 +384,7 @@ Both inserted without a problem.  But, won't this just merge our two docs togeth
 	| NULL | dynadoc | NULL | {"created": 1483362855000, "doc": {"fedex": 19.75, "ups": 14.5}, "doctype": "shipping"}        |      NULL |
 	+------+---------+------+------------------------------------------------------------------------------------------------+-----------+
 	
-	cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs' and co
-	    lumn_name like 'meta[_doc%';
+	cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs' and column_name like 'meta[_doc%';
 	+----------------------+-----------+----------------+-------------+
 	| column_name          | data_type | column_default | is_nullable |
 	+----------------------+-----------+----------------+-------------+
@@ -399,9 +397,9 @@ Both inserted without a problem.  But, won't this just merge our two docs togeth
 	+----------------------+-----------+----------------+-------------+
 	SELECT 6 rows in set (0.001 sec)
 
-The short answer is yes, 'doc' now has 4 possible columns.  This isn't necessarily an issue unless one doctype uses a different datatype for the same column name.  Perhaps one doctype uses an ordinal number for color instead of text.  
+The short answer is yes, `doc` now has 4 possible columns.  This isn't necessarily an issue unless one `doctype` uses a different datatype for the same column name.  Perhaps one `doctype` uses an ordinal number for color instead of text.  
 
-To solve that problem, let's try using the doctype as the name of the object.
+To solve that problem, let's try using the `doctype` value as the name of the document.
 
 	INSERT INTO mydocs (doctype, meta) VALUES (
 		      'flexdoc', { created = '2017-01-02T13:14:15',
@@ -431,6 +429,24 @@ Your application would first look at the doctype.  It would then use this as the
 	+-----------------+-------------------------------+---------+
 	SELECT 1 row in set (0.003 sec)
 
+How do our new column definitions look now?  
+
+cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs' and column_name like 'meta[_a%' or column_name like 'meta[_sh%';
++-----------------------------+-----------+----------------+-------------+
+| column_name                 | data_type | column_default | is_nullable |
++-----------------------------+-----------+----------------+-------------+
+| meta['attributes']          | object    |           NULL | TRUE        |
+| meta['attributes']['color'] | string    |           NULL | TRUE        |
+| meta['attributes']['size']  | string    |           NULL | TRUE        |
+| meta['shipping']            | object    |           NULL | TRUE        |
+| meta['shipping']['fedex']   | float     |           NULL | TRUE        |
+| meta['shipping']['ups']     | float     |           NULL | TRUE        |
++-----------------------------+-----------+----------------+-------------+
+SELECT 6 rows in set (0.002 sec)
+
+Looks great!  While we didn't giving shipping a color, you can see that if we did, it could now have its own datatype.  
+
+Of course, values in the `color` for a document would have to be text (or internally castable to text) going forward for new `attribute` document inserts.  That rule still applies for that `column_name`.  It just wouldn't constrain the datatype in the other document types.  
 	 
 ## Crate Reference Documentation
 
