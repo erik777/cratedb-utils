@@ -6,7 +6,7 @@ If you are used to a traditional SQL database, and putting your JSON or XML docu
 
 You ideally have a working copy of CrateDB running if you want to try the examples.  You might find it a good read even if not in front of your CrateDB CLI (crash), as it is very detailed.  
 
-You will want to read Crate's documentation on [table schema creation](https://crate.io/docs/crate/reference/sql/ddl/basics.html#schemas) and [Data Types]((https://crate.io/docs/crate/reference/sql/data_types.html)), reading in detail the part on the [object](https://crate.io/docs/crate/reference/sql/data_types.html#object) type.  
+You will want to read Crate's documentation on [table schema creation](https://crate.io/docs/crate/reference/sql/ddl/basics.html#schemas) and [Data Types](https://crate.io/docs/crate/reference/sql/data_types.html), reading in detail the part on the [object](https://crate.io/docs/crate/reference/sql/data_types.html#object) type.  
 
 
 ## Table definition
