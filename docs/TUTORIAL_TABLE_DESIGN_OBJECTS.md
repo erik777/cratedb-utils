@@ -431,18 +431,18 @@ Your application would first look at the doctype.  It would then use this as the
 
 How do our new column definitions look now?  
 
-cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs' and column_name like 'meta[_a%' or column_name like 'meta[_sh%';
-+-----------------------------+-----------+----------------+-------------+
-| column_name                 | data_type | column_default | is_nullable |
-+-----------------------------+-----------+----------------+-------------+
-| meta['attributes']          | object    |           NULL | TRUE        |
-| meta['attributes']['color'] | string    |           NULL | TRUE        |
-| meta['attributes']['size']  | string    |           NULL | TRUE        |
-| meta['shipping']            | object    |           NULL | TRUE        |
-| meta['shipping']['fedex']   | float     |           NULL | TRUE        |
-| meta['shipping']['ups']     | float     |           NULL | TRUE        |
-+-----------------------------+-----------+----------------+-------------+
-SELECT 6 rows in set (0.002 sec)
+	cr> select column_name, data_type, column_default, is_nullable from information_schema.columns where table_name = 'mydocs' and column_name like 'meta[_a%' or column_name like 'meta[_sh%';
+	+-----------------------------+-----------+----------------+-------------+
+	| column_name                 | data_type | column_default | is_nullable |
+	+-----------------------------+-----------+----------------+-------------+
+	| meta['attributes']          | object    |           NULL | TRUE        |
+	| meta['attributes']['color'] | string    |           NULL | TRUE        |
+	| meta['attributes']['size']  | string    |           NULL | TRUE        |
+	| meta['shipping']            | object    |           NULL | TRUE        |
+	| meta['shipping']['fedex']   | float     |           NULL | TRUE        |
+	| meta['shipping']['ups']     | float     |           NULL | TRUE        |
+	+-----------------------------+-----------+----------------+-------------+
+	SELECT 6 rows in set (0.002 sec)
 
 Looks great!  While we didn't giving shipping a color, you can see that if we did, it could now have its own datatype.  
 
