@@ -1,27 +1,11 @@
 
 does 'doctype' have special meaning in crate?  It is a field in object(dynamic) called `core`, included in CREATE TABLE. I do inserts, with value of `test`.  When I do SELECT `core`, *it is missing from the result*.  E.g., `{"docsubtype": "parse"}` instead of `{"doctype":"test","docsubtype":"parse"}`  But, when I select `core['doctype']`, I get back the value 'test', as it should, suggesting it is "hidden" when querying the OBJECT.  
 
-
-```cr> select core from mytable;
-
-+-------------------------+
-| core                    |
-+-------------------------+
-| {"docsubtype": "parse"} |
-+-------------------------+```
-
-```cr> select core['doctype'] from cloudcollection;
-+-----------------+
-| core['doctype'] |
-+-----------------+
-| test            |
-+-----------------+```
-
 To reproduce:
 
 	cr> CREATE TABLE mytable (
 		core object(dynamic) as (
-			doctype string NOT NULL,
+			doctype string,
 			docsubtype string,
 			devid string 
 		) NOT NULL
