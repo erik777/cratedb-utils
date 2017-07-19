@@ -2,6 +2,8 @@
 
 If you are used to a traditional SQL database, and putting your JSON or XML documents in a string/varchar/clob/blob/text field, you are going to love the `object` datatype in CrateDB.  This tutorial takes you through table creation, and with hands on experience, you learn what you can and cannot do with this capability, and how to do it.  
 
+This begins with interactions with basic datatypes, and how they impact queries.  
+
 ## Presumptions
 
 You ideally have a working copy of CrateDB running if you want to try the examples.  You might find it a good read even if not in front of your CrateDB CLI (crash), as it is very detailed.  
