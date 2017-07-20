@@ -1,5 +1,6 @@
+# Field of OBJECT(dynamic) missing from SELECT result
 
-does 'doctype' have special meaning in crate?  It is a field in object(dynamic) called `core`, included in CREATE TABLE. I do inserts, with value of `test`.  When I do SELECT `core`, *it is missing from the result*.  E.g., `{"docsubtype": "parse"}` instead of `{"doctype":"test","docsubtype":"parse"}`  But, when I select `core['doctype']`, I get back the value 'test', as it should, suggesting it is "hidden" when querying the OBJECT.  
+A field in object(dynamic) called `core` is included in the CREATE TABLE. When you INSERT with value of `test`, then SELECT `core`, *it is missing from the result*.  E.g., `{"docsubtype": "parse"}` instead of `{"doctype":"test","docsubtype":"parse"}`  But, when you select `core['doctype']`, you get back the value 'test', as expected, suggesting it is "hidden" when querying the OBJECT.  
 
 To reproduce:
 
