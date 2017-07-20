@@ -1,5 +1,7 @@
 # Field of OBJECT(dynamic) missing from SELECT result
 
+CrateDB Version 2.0.5
+
 A field in object(dynamic) called `core` is included in the CREATE TABLE. When you INSERT with value of `test`, then SELECT `core`, *it is missing from the result*.  E.g., `{"docsubtype": "parse"}` instead of `{"doctype":"test","docsubtype":"parse"}`  But, when you select `core['doctype']`, you get back the value 'test', as expected, suggesting it is "hidden" when querying the OBJECT.  
 
 To reproduce:
